@@ -178,8 +178,23 @@ private:
 	{
 		if(ldn==4)
 		{
-			for(int i=0;i<8;i++) addsub(data[i], data[i+8]);
-			for(int i=0;i<4;i++) addsub(data[i], data[i+4]);
+			for(int i=0;i<4;i++) 
+			{
+				double a = data[i];
+				double b = data[i+4];
+				double c = data[i+8];
+				double d = data[i+12];
+
+				double ac=a+c;
+				double amc=a-c;
+				double bd=b+d;
+				double bmd=b-d;
+
+				data[i]    =ac+bd;
+				data[i+4]  =ac-bd;
+				data[i+8]  =amc;
+				data[i+12] =bmd;		
+			}
 
 			addsub(data[5],data[7],cos45);
 
@@ -216,8 +231,24 @@ private:
 		//---------------------------
 		int n = pow(2,ldn-1);
 		int nh = n/2;
-		for(int i=0;i<n;i++) addsub(data[i], data[i+n]);
-		for(int i=0;i<nh;i++) addsub(data[i], data[i+nh]);
+
+		for(int i=0;i<nh;i++) 
+		{
+			double a = data[i];
+			double b = data[i+nh];
+			double c = data[i+n];
+			double d = data[i+n+nh];
+
+			double ac=a+c;
+			double amc=a-c;
+			double bd=b+d;
+			double bmd=b-d;
+
+			data[i]=ac+bd;
+			data[i+nh]=ac-bd;
+			data[i+n]=amc;
+			data[i+n+nh]=bmd;		
+		}
 
 		// recursion
 		r4step_addsub(data, ldn-2);
