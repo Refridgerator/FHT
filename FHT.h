@@ -1,6 +1,6 @@
 #pragma once
 
-// Fast Hartley Transform
+// Split-Radix Fast Hartley Transform
 // Inplace with power of 2 data length
 
 #include <math.h>
@@ -121,7 +121,7 @@ public:
 	//------------------------------------------------------------
 	void FHT::transform(double* data, bool scaled=true)
 	{
-		r4step_addsub(data, ldn);
+		step_addsub(data, ldn);
 		if (scaled)
 			for (int i = 0; i < size; i++) data[i] *= 1.0/(double)size;
 		revbin_permute(data);
@@ -129,7 +129,7 @@ public:
 
 	void FHT::back_transform(double* data)
 	{
-		r4step_addsub(data, ldn);
+		step_addsub(data, ldn);
 		revbin_permute(data);
 	}
 
@@ -174,7 +174,7 @@ private:
 		}
 	}
 
-	void FHT::r4step_addsub(double* data, int ldn) // real a[0..n-1] input,result
+	void FHT::step_addsub(double* data, int ldn) // real a[0..n-1] input,result
 	{
 		if(ldn==4)
 		{
@@ -201,7 +201,7 @@ private:
 			N21(data);
 			N21(data+4);
 
-			r4step_rotate8(data+8);
+			step_rotate8(data+8);
 			N21(data+8);
 			N21(data+8+4);
 			return;
@@ -209,7 +209,7 @@ private:
 
 		if(ldn==3)
 		{
-			r4step_addsub8(data);
+			step_addsub8(data);
 
 			N21(data);
 			N21(data+4);
@@ -251,12 +251,12 @@ private:
 		}
 
 		// recursion
-		r4step_addsub(data, ldn-2);
-		r4step_rotate(data+nh, ldn-2);
-		r4step_rotate(data+n, ldn-1);
+		step_addsub(data, ldn-2);
+		step_rotate(data+nh, ldn-2);
+		step_rotate(data+n, ldn-1);
 	}
 
-	void FHT::r4step_rotate(double* data, int ldn) // real a[0..sz-1] input,result
+	void FHT::step_rotate(double* data, int ldn) // real a[0..sz-1] input,result
 	{
 		int n = pow(2,ldn-1);
 		int nh = n/2;
@@ -297,12 +297,12 @@ private:
 		}
 
 		// recursion
-		r4step_addsub(data, ldn-1);
-		r4step_addsub(data+n, ldn-1);
+		step_addsub(data, ldn-1);
+		step_addsub(data+n, ldn-1);
 	}
 
 	//------------------------------------------------------------
-	__inline void FHT::r4step_rotate8(double* data) // real a[0..sz-1] input,result
+	__inline void FHT::step_rotate8(double* data) // real a[0..sz-1] input,result
 	{
 		addsub(data[0], data[4]);
 		data[2]*= sqrt2;
@@ -324,7 +324,7 @@ private:
 		data[7] = amb * cos22 - cd * sin22;
 	}
 
-	__inline void FHT::r4step_addsub8(double* data)
+	__inline void FHT::step_addsub8(double* data)
 	{
 		addsub(data[0],data[4]);
 		addsub(data[1],data[5]);
