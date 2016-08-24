@@ -198,12 +198,12 @@ private:
 
 			addsub(data[5],data[7],cos45);
 
-			N21(data);
-			N21(data+4);
+			step_n21(data);
+			step_n21(data+4);
 
 			step_rotate8(data+8);
-			N21(data+8);
-			N21(data+8+4);
+			step_n21(data+8);
+			step_n21(data+8+4);
 			return;
 		}
 
@@ -211,14 +211,14 @@ private:
 		{
 			step_addsub8(data);
 
-			N21(data);
-			N21(data+4);
+			step_n21(data);
+			step_n21(data+4);
 			return;
 		}
 
 		if(ldn==2)
 		{
-			N21(data);
+			step_n21(data);
 			return;
 		}
 
@@ -354,7 +354,7 @@ private:
 		v = tempu*s - v*c;
 	}
 
-	__inline void N21(double* data)
+	__inline void step_n21(double* data)
 	{
 		double v02=data[0]+data[2];
 		double v13=data[1]+data[3];
