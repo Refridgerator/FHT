@@ -3,7 +3,8 @@
 // Split-Radix Fast Hartley Transform
 // Inplace with power of 2 data length
 
-#include <math.h>
+#include <cmath>
+#include <complex>
 
 #ifndef consts_pi
 #define consts_pi
@@ -127,10 +128,10 @@ public:
 		revbin_permute(data);
 	}
 
-	void FHT::back_transform(double* data)
+	void FHT::back_transform(double* fht_data)
 	{
-		step_addsub(data, ldn);
-		revbin_permute(data);
+		step_addsub(fht_data, ldn);
+		revbin_permute(fht_data);
 	}
 
 	void FHT::convolute(double* fht_data, double* fht_fir, bool scaled=false)
@@ -156,6 +157,21 @@ public:
 		fht_data[0] *= fht_fir[0] * mul0;
 		fht_data[size/2] *= fht_fir[size/2] * mul0;
 	}
+
+	std::complex<double> FHT::get_frequency(double* fht_data, int number)
+	{
+		if (number==0) 
+			return std::complex<double>(fht_data[0],0);
+		else
+			if (number==size/2) 
+				return std::complex<double>(fht_data[size/2],0);
+			else
+			{
+				double a = 0.5*fht_data[number];
+				double b = 0.5*fht_data[size-number];
+				return std::complex<double>(a+b,a-b);
+			}
+	}
 	//------------------------------------------------------------
 
 private:
@@ -174,7 +190,7 @@ private:
 		}
 	}
 
-	void FHT::step_addsub(double* data, int ldn) // real a[0..n-1] input,result
+	void FHT::step_addsub(double* data, int ldn)
 	{
 		if(ldn==4)
 		{
@@ -198,12 +214,13 @@ private:
 
 			addsub(data[5],data[7],cos45);
 
-			step_n21(data);
-			step_n21(data+4);
+			step_addsub4(data);
+			step_addsub4(data+4);
 
 			step_rotate8(data+8);
-			step_n21(data+8);
-			step_n21(data+8+4);
+			
+			step_addsub4(data+8);
+			step_addsub4(data+8+4);
 			return;
 		}
 
@@ -211,14 +228,14 @@ private:
 		{
 			step_addsub8(data);
 
-			step_n21(data);
-			step_n21(data+4);
+			step_addsub4(data);
+			step_addsub4(data+4);
 			return;
 		}
 
 		if(ldn==2)
 		{
-			step_n21(data);
+			step_addsub4(data);
 			return;
 		}
 
@@ -249,14 +266,13 @@ private:
 			data[i+n]=amc;
 			data[i+n+nh]=bmd;		
 		}
-
-		// recursion
-		step_addsub(data, ldn-2);
+		// recursion calls
+		step_addsub(data,    ldn-2);
 		step_rotate(data+nh, ldn-2);
-		step_rotate(data+n, ldn-1);
+		step_rotate(data+n,  ldn-1);
 	}
 
-	void FHT::step_rotate(double* data, int ldn) // real a[0..sz-1] input,result
+	void FHT::step_rotate(double* data, int ldn)
 	{
 		int n = pow(2,ldn-1);
 		int nh = n/2;
@@ -295,14 +311,22 @@ private:
 			index++;
 			step-=2;
 		}
-
-		// recursion
-		step_addsub(data, ldn-1);
+		// recursion calls
+		step_addsub(data,   ldn-1);
 		step_addsub(data+n, ldn-1);
 	}
 
 	//------------------------------------------------------------
-	__inline void FHT::step_rotate8(double* data) // real a[0..sz-1] input,result
+	__inline void FHT::step_addsub8(double* data)
+	{
+		addsub(data[0],data[4]);
+		addsub(data[1],data[5]);
+		addsub(data[2],data[6]);
+		addsub(data[3],data[7]);
+		addsub(data[5],data[7],cos45);
+	}
+
+	__inline void FHT::step_rotate8(double* data)
 	{
 		addsub(data[0], data[4]);
 		data[2]*= sqrt2;
@@ -322,15 +346,6 @@ private:
 		data[3] = ab * sin22 + cmd * cos22;
 		data[5] = cd * cos22 + amb * sin22;
 		data[7] = amb * cos22 - cd * sin22;
-	}
-
-	__inline void FHT::step_addsub8(double* data)
-	{
-		addsub(data[0],data[4]);
-		addsub(data[1],data[5]);
-		addsub(data[2],data[6]);
-		addsub(data[3],data[7]);
-		addsub(data[5],data[7],cos45);
 	}
 
 	__inline void addsub(double& u, double& v)
@@ -354,14 +369,14 @@ private:
 		v = tempu*s - v*c;
 	}
 
-	__inline void step_n21(double* data)
+	__inline void step_addsub4(double* data)
 	{
-		double v02=data[0]+data[2];
-		double v13=data[1]+data[3];
+		double v02= data[0]+data[2];
+		double v13= data[1]+data[3];
 		double v02m=data[0]-data[2];
 		double v13m=data[1]-data[3];
-		data[0]=v02+v13;
-		data[1]=v02-v13;
+		data[0]= v02+v13;
+		data[1]= v02-v13;
 		data[2]=v02m+v13m;
 		data[3]=v02m-v13m;
 	}

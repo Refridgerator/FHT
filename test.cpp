@@ -17,22 +17,28 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	int size = 32;
 	FHT fht(size);
+	std::cout.precision(3);
 	
-	std::cout << "Convolute test using FHT." << std::endl << std::endl;
+	// convolution
+	std::cout << "Convolution test using FHT." << std::endl << std::endl;
 	std::cout << "fir:" << std::endl;
 	show(fir, size);
 	std::cout << "source:" << std::endl;
 	show(data, size);
-
 	//	
 	fht.transform(fir, false);
 	fht.transform(data);		
 	fht.convolute(data, fir);
 	fht.back_transform(data);
 	//
-	std::cout << "result:" << std::endl;
+	std::cout << "result of convolution:" << std::endl;
 	show(data, size);
 	
+	// spectrum
+	std::cout << "spectrum of fir:" << std::endl;
+	for(int i=0;i<=size/2;i++)
+		std::cout << std::abs(fht.get_frequency(fir, i)) << "\t";
+
 	std::cin.get();
 	return 0;
 }
