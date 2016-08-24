@@ -348,6 +348,18 @@ private:
 		data[7] = amb * cos22 - cd * sin22;
 	}
 
+	__inline void step_addsub4(double* data)
+	{
+		double v02= data[0]+data[2];
+		double v13= data[1]+data[3];
+		double v02m=data[0]-data[2];
+		double v13m=data[1]-data[3];
+		data[0]= v02+v13;
+		data[1]= v02-v13;
+		data[2]=v02m+v13m;
+		data[3]=v02m-v13m;
+	}
+
 	__inline void addsub(double& u, double& v)
 	{
 		double tempu = u;
@@ -368,18 +380,5 @@ private:
 		u = u*c + v*s;
 		v = tempu*s - v*c;
 	}
-
-	__inline void step_addsub4(double* data)
-	{
-		double v02= data[0]+data[2];
-		double v13= data[1]+data[3];
-		double v02m=data[0]-data[2];
-		double v13m=data[1]-data[3];
-		data[0]= v02+v13;
-		data[1]= v02-v13;
-		data[2]=v02m+v13m;
-		data[3]=v02m-v13m;
-	}
-
 };
  
