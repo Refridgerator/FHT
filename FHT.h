@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 // Fast Hartley Transform
 // Inplace with power of 2 data length
