@@ -2,6 +2,7 @@
 
 // Split-Radix Fast Hartley Transform
 // Inplace with power of 2 data length
+// Author: 2015-2016 Eugeniy Sokol, Magnitogorsk
 
 #include <cmath>
 #include <complex>
