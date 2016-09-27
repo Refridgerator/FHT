@@ -380,4 +380,3 @@ private:
 		v = tempu*s - v*c;
 	}
 };
- 
