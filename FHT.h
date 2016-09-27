@@ -48,9 +48,7 @@ public:
 		{
 			if(fht_trig_tables[k]==0)
 			{
-				fht_trig_tables[k] = static_cast<double*>(_aligned_malloc(cnt*4*sizeof(double),64));
-				double* trig_table = fht_trig_tables[k];
-
+				double* trig_table = fht_trig_tables[k] = new double[cnt*4];
 				index = 0;
 				double nn = cnt*4;
 				for (i = 1; i <= cnt; i++)
@@ -77,8 +75,8 @@ public:
 			else
 				k=(int)(pow(2,ldn-1)-pow(2,(ldn+1)/2-1));
 
-			fht_revbin_tables[ldn] = static_cast<int*>(_aligned_malloc(k*2*sizeof(int),64));
 			fht_revbin_counts[ldn] = k;
+			fht_revbin_tables[ldn] = new int[k*2];
 			index = 0;
 			for (int x = 1; x < size; x++)
 			{
@@ -104,7 +102,7 @@ public:
 		fht_instance_count[ldn]--;
 		if(fht_instance_count[ldn]==0)
 		{
-			_aligned_free(fht_revbin_tables[ldn]);
+			delete[] fht_revbin_tables[ldn];
 			fht_revbin_tables[ldn]=0;
 		}
 		int k0 = 31;
@@ -114,7 +112,7 @@ public:
 		{
 			if(fht_trig_tables[k]!=0)
 			{
-				_aligned_free(fht_trig_tables[k]);
+				delete[] fht_trig_tables[k];
 				fht_trig_tables[k] = 0;
 			}
 		}
