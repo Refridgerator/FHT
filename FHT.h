@@ -134,7 +134,7 @@ public:
 		revbin_permute(fht_data);
 	}
 
-	void FHT::convolute(double* fht_data, double* fht_fir, bool scaled=false)
+	void FHT::hartley_multiply(double* fht_data, double* fht_fir, bool scaled=false)
 	{
 		double mulf = 0.5*1.0;
 		double mul0 = 1.0;

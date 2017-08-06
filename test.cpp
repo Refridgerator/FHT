@@ -28,7 +28,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//	
 	fht.transform(fir, false);
 	fht.transform(data);		
-	fht.convolute(data, fir);
+	fht.hartley_multiply(data, fir);
 	fht.back_transform(data);
 	//
 	std::cout << "result of convolution:" << std::endl;
