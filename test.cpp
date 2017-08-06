@@ -17,6 +17,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	int size = 32;
 	FHT fht(size);
+	FHT fht2(size);
+	FHT fht3(size/2);
 	std::cout.precision(3);
 	
 	// convolution
